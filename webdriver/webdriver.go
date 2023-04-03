@@ -1,12 +1,13 @@
 package webdriver
 
 import (
-	"github.com/linweiyuan/go-chatgpt-api/api"
-	"github.com/tebeka/selenium"
-	"github.com/tebeka/selenium/chrome"
 	"log"
 	"os"
 	"time"
+
+	"github.com/linweiyuan/go-chatgpt-api/api"
+	"github.com/tebeka/selenium"
+	"github.com/tebeka/selenium/chrome"
 )
 
 var WebDriver selenium.WebDriver
@@ -31,13 +32,16 @@ func init() {
 		log.Fatal("Please set ChatGPT proxy server first")
 	}
 
-	WebDriver, _ = selenium.NewRemote(selenium.Capabilities{
+	WebDriver, err := selenium.NewRemote(selenium.Capabilities{
 		"chromeOptions": chrome.Capabilities{
 			Args:            chromeArgs,
 			ExcludeSwitches: []string{"enable-automation"},
 		},
 	}, chatgptProxyServer)
 
+	if err != nil {
+		log.Fatalf("Failed to create WebDriver: %v", err)
+	}
 	LoadPageAndHandleCaptcha()
 
 	WebDriver.SetAsyncScriptTimeout(time.Second * api.ScriptExecutionTimeout)
