@@ -41,6 +41,7 @@ func init() {
 
 	if err != nil {
 		log.Fatalf("Failed to create WebDriver: %v", err)
+		os.Exit(1)
 	}
 	LoadPageAndHandleCaptcha()
 
