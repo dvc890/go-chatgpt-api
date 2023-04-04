@@ -31,8 +31,8 @@ func init() {
 	if chatgptProxyServer == "" {
 		log.Fatal("Please set ChatGPT proxy server first")
 	}
-
-	WebDriver, err := selenium.NewRemote(selenium.Capabilities{
+	var err error
+	WebDriver, err = selenium.NewRemote(selenium.Capabilities{
 		"chromeOptions": chrome.Capabilities{
 			Args:            chromeArgs,
 			ExcludeSwitches: []string{"enable-automation"},
