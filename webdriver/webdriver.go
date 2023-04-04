@@ -19,7 +19,7 @@ func init() {
 		"--disable-gpu",
 		"--disable-dev-shm-usage",
 		"--disable-blink-features=AutomationControlled",
-		"--headless=new",
+		"--headless=false",
 	}
 
 	networkProxyServer := os.Getenv("NETWORK_PROXY_SERVER")
