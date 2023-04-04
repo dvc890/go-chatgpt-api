@@ -15,7 +15,6 @@ FROM archlinux
 
 ENV SUDO_USER_NAME dvc890
 ENV MIRROR_URL 'https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$arch'
-ENV CHATGPT_PROXY_SERVER http://localhost:9515
 
 WORKDIR /app
 
