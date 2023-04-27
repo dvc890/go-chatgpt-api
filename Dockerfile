@@ -45,9 +45,4 @@ ENV CHATGPT_PROXY_SERVER http://0.0.0.0:9515
 COPY . .
 RUN go build -ldflags="-w -s" -o go-chatgpt-api main.go
 
-CMD ["bash", "-c", "/bin/bash /run.sh & \
- sleep 3 \
- && ../undetected_chromedriver --allowed-ips= --allowed-origins=* &\
- sleep 5 \
- && exec /app/go-chatgpt-api"
- ]
+CMD ["bash", "-c", "/bin/bash /run.sh & sleep 3 && ../undetected_chromedriver --allowed-ips= --allowed-origins=* & sleep 5 && exec /app/go-chatgpt-api"]
