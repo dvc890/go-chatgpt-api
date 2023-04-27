@@ -1,3 +1,5 @@
 .idea
+.env
 .history
 go-chatgpt-api
+undetected_chromedriver

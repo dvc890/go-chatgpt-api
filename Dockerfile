@@ -1,17 +1,4 @@
-# FROM golang:alpine AS builder
-
-# WORKDIR /app
-# COPY . .
-# RUN go build -ldflags="-w -s" -o go-chatgpt-api main.go
-
-# FROM alpine
-# WORKDIR /app
-# COPY --from=builder /app/go-chatgpt-api .
-
-# EXPOSE 8080
-
-# CMD ["/app/go-chatgpt-api"]
-FROM archlinux
+FROM linweiyuan/chatgpt-proxy-server-warp
 
 ENV SUDO_USER_NAME dvc890
 ENV MIRROR_URL 'https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$arch'
@@ -48,8 +35,19 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 
 EXPOSE 8080
 EXPOSE 9515
+EXPOSE 40000
+EXPOSE 65535
+
+ENV NETWORK_PROXY_SERVER socks5://0.0.0.0:65535
+# ChatGPT proxy server address
+ENV CHATGPT_PROXY_SERVER http://0.0.0.0:9515
 
 COPY . .
 RUN go build -ldflags="-w -s" -o go-chatgpt-api main.go
 
-CMD ["bash", "-c", "../undetected_chromedriver --allowed-ips= --allowed-origins=* & sleep 5 && exec /app/go-chatgpt-api"]
+CMD ["bash", "-c", "/bin/bash /run.sh & \
+ sleep 3 \
+ && ../undetected_chromedriver --allowed-ips= --allowed-origins=* &\
+ sleep 5 \
+ && exec /app/go-chatgpt-api"
+ ]

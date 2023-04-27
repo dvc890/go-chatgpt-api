@@ -1,35 +1,39 @@
 package webdriver
 
 import (
+	"strings"
+
+	"github.com/linweiyuan/go-chatgpt-api/api"
 	"github.com/linweiyuan/go-chatgpt-api/util/logger"
 )
 
 //goland:noinspection GoUnhandledErrorResult
 func Refresh() {
-	refreshDoneChannel := make(chan bool)
-
-	go func() {
-		WebDriver.Refresh()
-
+	if err := WebDriver.Refresh(); err != nil {
+		errorMessage := err.Error()
+		if strings.HasSuffix(errorMessage, "connect: connection refused") {
+			logger.Error("Please make sure chatgpt-proxy-server is running, if running, restart it")
+		} else if strings.HasSuffix(errorMessage, "invalid session id") {
+			logger.Warn("Service chatgpt-proxy-server is detected, go-chatgpt-api is trying to resume")
+			newRefresh()
+		}
+	} else {
 		HandleCaptcha(WebDriver)
-
-		refreshDoneChannel <- true
-	}()
-
-	<-refreshDoneChannel
-	logger.Info("Refresh is done")
+	}
 }
 
 //goland:noinspection GoUnhandledErrorResult
-func NewSessionAndRefresh(errorMessage string) {
-	logger.Error("selenium error: " + errorMessage + ", need to create a new session and refresh")
+func NewSessionAndRefresh() {
 	if _, err := WebDriver.PageSource(); err != nil {
 		if err.Error() == "invalid session id: invalid session id" {
-			logger.Info("old session id: " + WebDriver.SessionID())
-			WebDriver.NewSession()
-			logger.Info("new session id: " + WebDriver.SessionID())
-
-			LoadPageAndHandleCaptcha()
+			newRefresh()
 		}
 	}
+}
+
+//goland:noinspection GoUnhandledErrorResult
+func newRefresh() {
+	WebDriver.NewSession()
+	WebDriver.Get(api.ChatGPTUrl)
+	HandleCaptcha(WebDriver)
 }
