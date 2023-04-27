@@ -14,6 +14,16 @@ Also support official API (the way which using API key):
 
 ---
 
+**If the `LOG_LEVEL` is set to `DEBUG` or `INFO`, more logs will be printed, but as a result, the disk usage will be much higher.**
+
+`chatgpt-proxy-server` supports `ALL`, `DEBUG`, `INFO`, `WARNING`, `SEVERE`, `OFF`. (This is officially supported.)
+
+`chatgpt-proxy-server-warp` supports `DEBUG`, `INFO`, `WARN`, `ERROR`. (This is not officially supported, just using a `grep`, so the logs may not be too precise.)
+
+For local development, set `CHATGPT_API_MODE=development`, this will disable `headless` mode and open a browser.
+
+---
+
 Use both ChatGPT mode and API mode:
 
 ```yaml
@@ -63,6 +73,8 @@ services:
   go-chatgpt-api:
     container_name: go-chatgpt-api
     image: linweiyuan/go-chatgpt-api
+    ports:
+      - 8080:8080
     environment:
       - GIN_MODE=release
       - CHATGPT_PROXY_SERVER=http://chatgpt-proxy-server:9515
@@ -75,11 +87,15 @@ services:
   chatgpt-proxy-server:
     container_name: chatgpt-proxy-server
     image: linweiyuan/chatgpt-proxy-server
+    environment:
+      - LOG_LEVEL=OFF
     restart: unless-stopped
 
   chatgpt-proxy-server-warp:
     container_name: chatgpt-proxy-server-warp
     image: linweiyuan/chatgpt-proxy-server-warp
+    environment:
+      - LOG_LEVEL=OFF
     restart: unless-stopped
 ```
 
